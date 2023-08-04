@@ -18,6 +18,7 @@ import "./SenderCreator.sol";
 import "./Helpers.sol";
 import "./NonceManager.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import "hardhat/console.sol";
 
 contract EntryPoint is
     IEntryPoint,
@@ -425,6 +426,12 @@ contract EntryPoint is
     //Its purpose is to calculate the total gas prepayment required
     //from the user to cover the gas costs associated with the user operation execution.
 
+    //The function defines a variable mul that determines the multiplier to be used
+    //for the verificationGasLimit. If the paymaster address in mUserOp is not
+    //zero (indicating that a Paymaster is being used), then mul is set to 3, otherwise,
+    // it is set to 1. This is because the verificationGasLimit is also used as a limit
+    // for the postOp call, and in some cases, the security model might call postOp twice.
+
     function _getRequiredPrefund(
         MemoryUserOp memory mUserOp
     ) internal pure returns (uint256 requiredPrefund) {
@@ -562,6 +569,7 @@ contract EntryPoint is
                     : requiredPrefund - bal;
             }
             try
+                //validates the signer and check if its the owner and sends funcds to the Entry poin twhich will be the entry point
                 IAccount(sender).validateUserOp{
                     gas: mUserOp.verificationGasLimit
                 }(op, opInfo.userOpHash, missingAccountFunds)
@@ -651,6 +659,7 @@ contract EntryPoint is
             validationData
         );
         if (expectedAggregator != aggregator) {
+            console.log("im haere");
             revert FailedOp(opIndex, "AA24 signature error");
         }
         if (outOfTimeRange) {
@@ -715,6 +724,7 @@ contract EntryPoint is
 
         uint256 gasUsedByValidateAccountPrepayment;
         uint256 requiredPreFund = _getRequiredPrefund(mUserOp);
+
         (
             gasUsedByValidateAccountPrepayment,
             validationData

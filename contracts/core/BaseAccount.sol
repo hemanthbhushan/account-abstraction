@@ -7,6 +7,7 @@ pragma solidity ^0.8.12;
 import "../interfaces/IAccount.sol";
 import "../interfaces/IEntryPoint.sol";
 import "./Helpers.sol";
+import "hardhat/console.sol";
 
 /**
  * Basic account implementation.
@@ -42,6 +43,7 @@ abstract contract BaseAccount is IAccount {
     function validateUserOp(UserOperation calldata userOp, bytes32 userOpHash, uint256 missingAccountFunds)
     external override virtual returns (uint256 validationData) {
         _requireFromEntryPoint();
+        console.log("inside validateUserOp " );
         validationData = _validateSignature(userOp, userOpHash);
         _validateNonce(userOp.nonce);
         _payPrefund(missingAccountFunds);
@@ -104,4 +106,4 @@ abstract contract BaseAccount is IAccount {
             //ignore failure (its EntryPoint's job to verify, not account.)
         }
     }
-}
+}   

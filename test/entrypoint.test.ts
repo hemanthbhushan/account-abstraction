@@ -511,7 +511,7 @@ describe('EntryPoint', function () {
     })
   })
 
-  describe('2d nonces', () => {
+  describe.only('2d nonces', () => {
     const beneficiaryAddress = createAddress()
     let sender: string
     const key = 1
@@ -575,7 +575,7 @@ describe('EntryPoint', function () {
       })
     })
   })
-
+//first analyse
   describe('without paymaster (account pays in eth)', () => {
     describe('#handleOps', () => {
       let counter: TestCounter
